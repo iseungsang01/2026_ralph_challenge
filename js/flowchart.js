@@ -225,7 +225,12 @@
     if (!spec || !Array.isArray(spec.steps) || !spec.steps.length) return "";
     const BW_MIN = 122, BH = 46, BH_SUB = 56, ROW_GAP = 34, COL_GAP = 16, PAD = 8;
     const norm = (b) => (typeof b === "string" ? { label: b } : b || {});
-    const boxW = (b) => Math.max(BW_MIN, Math.min(300, (norm(b).label || "").length * 8.6 + 26));
+    const boxW = (b) => {
+      const n = norm(b);
+      const labLen = (n.label || "").length * 8.6;
+      const subLen = (n.sub || "").length * 6.4;   // sub는 폰트가 더 작다
+      return Math.max(BW_MIN, Math.min(320, Math.max(labLen, subLen) + 26));
+    };
     const boxH = (b) => (norm(b).sub ? BH_SUB : BH);
     const rows = spec.steps.map((s) => (Array.isArray(s) ? s.map(norm) : [norm(s)]));
 
