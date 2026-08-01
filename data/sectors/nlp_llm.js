@@ -86,3 +86,113 @@ window.AITL.register({
     uncertainty: []
   }
 });
+
+// ---- Phase 2 골격 (detail은 Phase 3에서) ----
+
+window.AITL.register({
+  id: "word2vec-2013", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2013, date: "2013-01", evolves_from: [],
+  title_en: "Efficient Estimation of Word Representations in Vector Space",
+  name_ko: "Word2Vec",
+  oneliner: "단어를 의미 연산이 가능한 벡터로 학습하는 임베딩 기법",
+  link: { kind: "arxiv", label: "arXiv:1301.3781", url: "https://arxiv.org/abs/1301.3781" }
+});
+
+window.AITL.register({
+  id: "bert-2018", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2018, date: "2018-10", evolves_from: ["transformer-2017"],
+  title_en: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+  name_ko: "BERT",
+  oneliner: "양방향 마스크 언어 모델 사전학습으로 이해 과제를 평정",
+  link: { kind: "arxiv", label: "arXiv:1810.04805", url: "https://arxiv.org/abs/1810.04805" }
+});
+
+window.AITL.register({
+  id: "t5-2019", sector: "nlp_llm", also_in: [], type: "paper", tier: "minor",
+  year: 2019, date: "2019-10", evolves_from: ["bert-2018"],
+  title_en: "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+  name_ko: "T5",
+  oneliner: "모든 NLP 과제를 텍스트-투-텍스트 형식으로 통일",
+  link: { kind: "arxiv", label: "arXiv:1910.10683", url: "https://arxiv.org/abs/1910.10683" }
+});
+
+window.AITL.register({
+  id: "gpt3-2020", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2020, date: "2020-05", evolves_from: ["gpt2-2019"],
+  title_en: "Language Models are Few-Shot Learners",
+  name_ko: "GPT-3",
+  oneliner: "1750억 파라미터 규모에서 나타난 in-context 학습 능력",
+  link: { kind: "arxiv", label: "arXiv:2005.14165", url: "https://arxiv.org/abs/2005.14165" }
+});
+
+window.AITL.register({
+  id: "scaling-laws-2020", sector: "nlp_llm", also_in: [], type: "paper", tier: "minor",
+  year: 2020, date: "2020-01", evolves_from: [],
+  title_en: "Scaling Laws for Neural Language Models",
+  name_ko: "스케일링 법칙(Scaling Laws)",
+  oneliner: "성능이 모델·데이터·연산량의 거듭제곱 법칙을 따름을 규명",
+  link: { kind: "arxiv", label: "arXiv:2001.08361", url: "https://arxiv.org/abs/2001.08361" }
+});
+
+window.AITL.register({
+  id: "chinchilla-2022", sector: "nlp_llm", also_in: [], type: "paper", tier: "minor",
+  year: 2022, date: "2022-03", evolves_from: ["scaling-laws-2020"],
+  title_en: "Training Compute-Optimal Large Language Models",
+  name_ko: "Chinchilla",
+  oneliner: "같은 연산량이면 모델보다 데이터를 키워야 함을 입증",
+  link: { kind: "arxiv", label: "arXiv:2203.15556", url: "https://arxiv.org/abs/2203.15556" }
+});
+
+window.AITL.register({
+  id: "instructgpt-2022", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2022, date: "2022-03", evolves_from: ["gpt3-2020"],
+  title_en: "Training language models to follow instructions with human feedback",
+  name_ko: "InstructGPT (RLHF)",
+  oneliner: "인간 피드백 강화학습으로 언어 모델을 지시에 정렬",
+  link: { kind: "arxiv", label: "arXiv:2203.02155", url: "https://arxiv.org/abs/2203.02155" }
+});
+
+window.AITL.register({
+  id: "chatgpt-2022", sector: "nlp_llm", also_in: [], type: "product", tier: "major",
+  year: 2022, date: "2022-11", evolves_from: ["instructgpt-2022"],
+  title_en: "ChatGPT",
+  name_ko: "ChatGPT",
+  oneliner: "대화형 인터페이스로 LLM을 대중화한 서비스",
+  link: null
+});
+
+window.AITL.register({
+  id: "llama-2023", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2023, date: "2023-02", evolves_from: ["chinchilla-2022"],
+  title_en: "LLaMA: Open and Efficient Foundation Language Models",
+  name_ko: "LLaMA",
+  oneliner: "공개 가중치 고성능 LLM으로 오픈소스 생태계를 촉발",
+  link: { kind: "arxiv", label: "arXiv:2302.13971", url: "https://arxiv.org/abs/2302.13971" }
+});
+
+window.AITL.register({
+  id: "gpt4-2023", sector: "nlp_llm", also_in: [], type: "model", tier: "major",
+  year: 2023, date: "2023-03", evolves_from: ["chatgpt-2022"],
+  title_en: "GPT-4 Technical Report",
+  name_ko: "GPT-4",
+  oneliner: "전문가 시험 수준의 추론과 이미지 입력을 갖춘 LLM",
+  link: { kind: "arxiv", label: "arXiv:2303.08774", url: "https://arxiv.org/abs/2303.08774" }
+});
+
+window.AITL.register({
+  id: "o1-2024", sector: "nlp_llm", also_in: [], type: "model", tier: "major",
+  year: 2024, date: "2024-09", evolves_from: ["gpt4-2023"],
+  title_en: "OpenAI o1",
+  name_ko: "OpenAI o1 (추론 모델)",
+  oneliner: "답하기 전에 길게 생각하는 사고 사슬 강화학습 모델",
+  link: null
+});
+
+window.AITL.register({
+  id: "deepseek-r1-2025", sector: "nlp_llm", also_in: [], type: "paper", tier: "minor",
+  year: 2025, date: "2025-01", evolves_from: ["o1-2024"],
+  title_en: "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+  name_ko: "DeepSeek-R1",
+  oneliner: "공개된 추론 특화 모델과 그 강화학습 레시피",
+  link: { kind: "arxiv", label: "arXiv:2501.12948", url: "https://arxiv.org/abs/2501.12948" }
+});

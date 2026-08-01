@@ -14,15 +14,15 @@
 
 ## Phase 2 — Sector skeletons (PRD §5 시드 리스트의 전 노드를 골격으로: detail 필드 없이 id~link까지만)
 
-- [ ] nlp_llm: 17개 골격 (기존 샘플 2건은 유지) + Phase 3 id 동기화 확인
-- [ ] vision: 14개 골격
-- [ ] generative: 12개 골격
-- [ ] rl_games: 11개 골격
-- [ ] multimodal: 9개 골격
-- [ ] speech_audio: 9개 골격
-- [ ] robotics: 10개 골격
-- [ ] code_agents: 10개 골격
-- [ ] ai4science: 9개 골격
+- [x] nlp_llm: 17개 골격 (기존 샘플 2건은 유지) + Phase 3 id 동기화 확인
+- [x] vision: 14개 골격
+- [x] generative: 12개 골격
+- [x] rl_games: 11개 골격
+- [x] multimodal: 9개 골격
+- [x] speech_audio: 9개 골격
+- [x] robotics: 10개 골격
+- [x] code_agents: 10개 골격
+- [x] ai4science: 9개 골격
 
 ## Phase 3 — Detail content (노드당 1태스크. 같은 섹터의 연속 미완료 항목을 major 최대 3개 / minor 최대 5개까지 한 이터레이션에 묶을 수 있음 — 전부 품질 기준 충족 시에만)
 
@@ -89,7 +89,7 @@
 - [ ] dreamerv3-2023 detail
 
 ### multimodal
-- [ ] show-and-tell-2015 detail
+- [ ] show-and-tell-2014 detail
 - [ ] clip-2021 detail
 - [ ] flamingo-2022 detail
 - [ ] blip2-2023 detail
@@ -131,7 +131,7 @@
 - [ ] voyager-2023 detail
 - [ ] swe-bench-2023 detail
 - [ ] swe-agent-2024 detail
-- [ ] cursor-2024 detail
+- [ ] cursor-2023 detail
 - [ ] devin-2024 detail
 
 ### ai4science
@@ -139,7 +139,7 @@
 - [ ] alphafold2-2021 detail
 - [ ] alphatensor-2022 detail
 - [ ] esm2-2022 detail
-- [ ] graphcast-2023 detail
+- [ ] graphcast-2022 detail
 - [ ] gnome-2023 detail
 - [ ] funsearch-2023 detail
 - [ ] alphageometry-2024 detail
@@ -162,3 +162,4 @@
 - 2026-08-01 iter003: [phase1] app.js 라우터+뷰 — -
 - 2026-08-01 iter004: [phase1] flowchart.js SVG 렌더러 — 동시점 부모-자식은 세로 엣지로 처리
 - 2026-08-01 iter005: [phase1] nlp_llm 샘플 — 참조 무결성 위해 attention-2014/seq2seq-2014/gpt1-2018 골격 선등록(POLICY §25), 골드 deep 분량 하한 보강
+- 2026-08-01 iter006: [phase2] 9개 섹터 골격 101노드 등록 + index.html 배선 — id 동기화 3건: show-and-tell-2014(arXiv v1 2014-11), cursor-2023(최초 공개 2023), graphcast-2022(arXiv v1 2022-12); stable-diffusion은 §13에 따라 type:model/date:2022-08 (POLICY §25 기록)
