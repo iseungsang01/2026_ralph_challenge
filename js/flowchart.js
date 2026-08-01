@@ -118,22 +118,31 @@
     }
 
     // 노드
+    const tint = (hex, a) => { // hex + 알파(0~1) → rgba
+      const h = hex.replace('#', '');
+      const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+      return `rgba(${r},${g},${b},${a})`;
+    };
     for (const it of nodes) {
       const p = pos.get(it.id);
       const isGhost = ghosts.includes(it.id);
       const shared = !isGhost && it.sector !== sectorId;      // also_in으로 공동 노출된 노드
       const color = sectorOf(it.sector).color;
+      const major = it.tier === "major";
       const name = it.name_ko.length > 14 ? it.name_ko.slice(0, 13) + "…" : it.name_ko;
       const cls = `fc-node tier-${it.tier}${isGhost ? " ghost" : ""}`;
+      const fill = isGhost ? "#fafbfc" : major ? tint(color, 0.1) : "#fff";
       out.push(`<g class="${cls}" data-item="${esc(it.id)}" tabindex="0" role="link" aria-label="${esc(it.name_ko)} 상세 보기">`);
       out.push(`<title>${esc(it.name_ko)} (${it.year}) — ${esc(it.oneliner)}</title>`);
-      out.push(`<rect x="${p.x}" y="${p.y}" width="${NODE_W}" height="${NODE_H}" rx="8" stroke="${color}"/>`);
-      out.push(`<text class="fc-name" x="${p.x + 10}" y="${p.y + 19}">${esc(name)}</text>`);
+      out.push(`<rect x="${p.x}" y="${p.y}" width="${NODE_W}" height="${NODE_H}" rx="9" fill="${fill}" stroke="${color}" stroke-width="${major ? 2 : 1.3}"${isGhost ? ' stroke-dasharray="5 4"' : ''}/>`);
+      // 왼쪽 색 스트라이프 (major 강조)
+      if (major && !isGhost) out.push(`<rect x="${p.x}" y="${p.y}" width="4" height="${NODE_H}" rx="2" fill="${color}"/>`);
+      out.push(`<text class="fc-name" x="${p.x + (major && !isGhost ? 13 : 11)}" y="${p.y + 19}" fill="${major ? color : '#1c2330'}" font-weight="${major ? 700 : 600}">${esc(name)}</text>`);
       const sub = isGhost ? `${it.year} · ${esc(sectorOf(it.sector).name_ko)}` : String(it.year);
-      out.push(`<text class="fc-year" x="${p.x + 10}" y="${p.y + 36}">${sub}</text>`);
+      out.push(`<text class="fc-year" x="${p.x + (major && !isGhost ? 13 : 11)}" y="${p.y + 36}">${sub}</text>`);
       if (shared) {
-        out.push(`<rect x="${p.x + NODE_W - 40}" y="${p.y - 8}" width="36" height="16" rx="8" fill="#1f6b45"/>`);
-        out.push(`<text class="fc-badge" x="${p.x + NODE_W - 33}" y="${p.y + 4}">공동</text>`);
+        out.push(`<rect x="${p.x + NODE_W - 42}" y="${p.y - 9}" width="38" height="17" rx="8.5" fill="#1f6b45"/>`);
+        out.push(`<text class="fc-badge" x="${p.x + NODE_W - 34}" y="${p.y + 3.5}">공동</text>`);
       }
       out.push("</g>");
     }
