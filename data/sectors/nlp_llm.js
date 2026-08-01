@@ -1,0 +1,243 @@
+// nlp_llm — 자연어 처리·LLM 섹터 데이터
+// Phase 1: 골드 스탠다드 2건(transformer-2017, gpt2-2019) + 참조 무결성을 위한 골격 2건
+// (attention-2014, gpt1-2018). 나머지는 Phase 2에서 골격, Phase 3에서 상세를 채운다.
+
+window.AITL.register({
+  id: "attention-2014", sector: "nlp_llm", also_in: [],
+  type: "paper", tier: "major", year: 2014, date: "2014-09",
+  evolves_from: ["seq2seq-2014"],
+  title_en: "Neural Machine Translation by Jointly Learning to Align and Translate",
+  name_ko: "어텐션(Bahdanau Attention)",
+  oneliner: "번역 시 소스 문장에서 필요한 부분을 골라 보는 정렬 메커니즘",
+  link: { kind: "arxiv", label: "arXiv:1409.0473", url: "https://arxiv.org/abs/1409.0473" }
+});
+
+window.AITL.register({
+  id: "seq2seq-2014", sector: "nlp_llm", also_in: [],
+  type: "paper", tier: "major", year: 2014, date: "2014-09",
+  evolves_from: [],
+  title_en: "Sequence to Sequence Learning with Neural Networks",
+  name_ko: "Seq2Seq",
+  oneliner: "인코더-디코더 구조로 가변 길이 시퀀스를 변환하는 프레임워크",
+  link: { kind: "arxiv", label: "arXiv:1409.3215", url: "https://arxiv.org/abs/1409.3215" },
+  detail: {
+    tldr: "인코더가 입력 문장을 하나의 벡터로 요약하고 디코더가 그로부터 출력 문장을 생성하는, 신경망 기계번역의 원형이다.",
+    levels: {
+      intro: `<p>문장을 다른 문장으로 바꾸는 일 — 번역, 요약, 질문에 답하기 — 은 입력과 출력의 길이가 제각각이라 다루기 어려웠다. Seq2Seq(sequence-to-sequence)는 이를 <b>통역사의 2단계 작업</b>으로 풀었다. 통역사는 먼저 상대의 문장을 끝까지 듣고 머릿속에 그 뜻을 요약해 담은 뒤, 그 요약만 보고 다른 언어로 문장을 처음부터 다시 만들어 말한다.</p>
+<p>비유를 실제와 대응시키면, "끝까지 듣는" 역할이 인코더(encoder) — 입력 문장을 한 단어씩 읽는 순환 신경망(RNN) — 이고, "머릿속 요약"이 문장 전체의 뜻을 압축한 고정 길이의 숫자 묶음인 컨텍스트 벡터(context vector), "다시 말하는" 역할이 그 벡터에서 출발해 출력 단어를 하나씩 만들어내는 디코더(decoder)다.</p>
+<p>이 구조의 힘은 범용성이다. 입력과 출력이 무엇이든 — 영어에서 프랑스어든, 긴 글에서 요약이든 — 시퀀스를 시퀀스로 바꾸는 문제라면 같은 틀로 학습할 수 있다. 다만 통역사의 머릿속 요약 용량이 정해져 있듯, 아무리 긴 문장도 고정 크기 벡터 하나에 눌러 담아야 해서 문장이 길어지면 정보가 뭉개지는 약점이 있었다. 이 약점을 파고든 것이 바로 다음 세대의 어텐션(attention)이다.</p>`,
+      mid: `<p>Seq2Seq는 두 개의 다층 LSTM(long short-term memory)으로 구성된다. 인코더 LSTM이 입력 토큰을 순서대로 읽어 마지막 은닉 상태(hidden state)에 문장 전체의 정보를 축적하고, 디코더 LSTM이 그 상태를 초기값으로 받아 출력 토큰을 하나씩 생성한다. 디코더는 매 시점 "지금까지 만든 출력"과 "인코더가 준 요약"을 조건으로 다음 토큰의 확률 분포를 출력하는 조건부 언어 모델이며, 문장 끝 토큰(EOS)이 나올 때까지 생성을 반복한다.</p>
+<p>학습은 정답 출력 문장의 로그 확률을 최대화하는 방식이다. 이때 디코더 입력으로 (자기가 방금 생성한 토큰 대신) 정답 토큰을 넣어주는 교사 강요(teacher forcing)를 쓰면 학습이 안정된다. 추론 시에는 매 단계 가장 그럴듯한 토큰 하나만 고르는 탐욕 탐색 대신, 유망한 후보 문장 여러 개를 동시에 유지하는 빔 서치(beam search)로 더 좋은 출력을 찾는다.</p>
+<p>논문의 실용적 발견 중 유명한 것이 <b>입력 문장 뒤집기</b>다. 소스 문장의 단어 순서를 거꾸로 넣으면 소스의 앞부분과 타깃의 앞부분 사이 거리가 짧아져, 학습 신호가 전달되기 쉬워지고 번역 품질이 크게 올랐다. 이는 고정 벡터 병목과 장거리 의존성 문제가 실재함을 보여주는 신호이기도 했고, 어텐션 메커니즘이 등장하는 배경이 됐다.</p>`,
+      deep: `<p>정식화하면, 입력 시퀀스 x<sub>1</sub>…x<sub>T</sub>와 출력 시퀀스 y<sub>1</sub>…y<sub>T'</sub>에 대해 모델은 조건부 확률 p(y<sub>1</sub>…y<sub>T'</sub>|x<sub>1</sub>…x<sub>T</sub>) = ∏<sub>t</sub> p(y<sub>t</sub>|v, y<sub>1</sub>…y<sub>t-1</sub>)를 학습한다. 여기서 v는 인코더 LSTM이 입력을 끝까지 읽은 뒤의 마지막 은닉·셀 상태, 즉 고정 차원의 문장 표현이다.</p>
+<ol>
+<li><b>인코딩:</b> 인코더 LSTM이 x<sub>t</sub>를 순서대로 처리하며 상태를 갱신한다. LSTM의 게이트 구조가 단순 RNN의 기울기 소실을 완화해 수십 토큰 길이의 의존성을 다룰 수 있게 한다.</li>
+<li><b>디코딩:</b> 디코더 LSTM은 인코더의 최종 상태로 초기화되고, 직전 출력 토큰을 입력받아 상태를 갱신한 뒤 소프트맥스로 다음 토큰 분포를 출력한다. 학습 목표는 정답 쌍 (x,y)들에 대한 ∑ log p(y|x)의 최대화다.</li>
+<li><b>구조 선택:</b> 원논문은 깊은 다층 LSTM을 사용했고, 층을 쌓는 것이 얕은 모델보다 확실히 유리함을 보고했다. 인코더와 디코더는 파라미터를 공유하지 않는 별도의 네트워크다.</li>
+<li><b>입력 뒤집기:</b> 소스 문장을 역순으로 입력하면 소스 앞부분 단어와 그에 대응하는 타깃 앞부분 단어 사이의 시간 거리가 짧아진다. 평균 거리는 그대로지만 "짧은 의존성 다수"가 도입되어 최적화가 쉬워지고, 번역 품질이 크게 향상됐다.</li>
+<li><b>빔 서치:</b> 추론 시 부분 가설을 점수순으로 B개 유지하며 확장한다. 작은 빔 폭으로도 탐욕 탐색보다 좋았고, 당시 통계 기계번역(SMT) 시스템이 만든 후보 목록의 재순위화에도 효과적이었다.</li>
+</ol>
+<p>WMT 영어-프랑스어 번역에서 순수 신경망만으로 당시의 구문 기반 통계 번역 시스템에 필적하는 성능을 얻어, "신경망만으로 번역이 된다"는 것을 처음으로 대규모에서 입증했다. 같은 시기 Cho 등의 RNN Encoder-Decoder 연구와 함께 신경 기계번역(NMT)의 표준 틀이 됐다. 남은 병목은 명확했다. 문장 전체를 고정 길이 벡터 하나로 압축하는 설계는 문장이 길어질수록 성능이 떨어졌고, 이 문제의식이 바로 <a href="#/item/attention-2014">어텐션</a>의 출발점이 됐다.</p>`
+    },
+    impact: `<p>Seq2Seq는 "입력 시퀀스를 읽는 네트워크와 출력 시퀀스를 쓰는 네트워크를 이어 붙인다"는 인코더-디코더 패러다임을 확립했다. 기계번역을 넘어 요약, 대화, 음성 인식, 이미지 캡셔닝(인코더만 CNN으로 교체)까지 같은 틀이 이식됐고, 실서비스 신경망 번역의 기술적 토대가 됐다. 무엇보다 이 구조의 고정 벡터 병목이 어텐션을, 어텐션이 다시 트랜스포머를 낳으면서, 현대 LLM으로 이어지는 계보의 첫 칸을 차지한다.</p>`,
+    uncertainty: []
+  }
+});
+
+window.AITL.register({
+  id: "gpt1-2018", sector: "nlp_llm", also_in: [],
+  type: "paper", tier: "major", year: 2018, date: "2018-06",
+  evolves_from: ["transformer-2017"],
+  title_en: "Improving Language Understanding by Generative Pre-Training",
+  name_ko: "GPT-1",
+  oneliner: "생성적 사전학습 후 미세조정하는 디코더 전용 트랜스포머",
+  link: null
+});
+
+window.AITL.register({
+  id: "transformer-2017", sector: "nlp_llm", also_in: [],
+  type: "paper", tier: "major", year: 2017, date: "2017-06",
+  evolves_from: ["attention-2014"],
+  title_en: "Attention Is All You Need",
+  name_ko: "트랜스포머(Transformer)",
+  oneliner: "순환 없이 어텐션만으로 시퀀스를 병렬 처리하는 아키텍처",
+  link: { kind: "arxiv", label: "arXiv:1706.03762", url: "https://arxiv.org/abs/1706.03762" },
+  detail: {
+    tldr: "단어들이 서로를 직접 참조하는 어텐션만으로 문장을 처리해, RNN의 순차 처리 한계를 없앤 아키텍처다.",
+    levels: {
+      intro: `<p>이전까지의 언어 모델(RNN 계열)은 문장을 <b>말 전하기 게임</b>처럼 처리했다. 첫 단어의 정보가 두 번째, 세 번째 단어를 거쳐 릴레이로 전달되는데, 문장이 길어질수록 앞의 정보가 점점 흐려진다. 또 반드시 앞 단어를 처리해야 다음 단어로 넘어갈 수 있어 속도도 느렸다.</p>
+<p>트랜스포머(Transformer)의 아이디어는 릴레이를 없애고 <b>모든 단어가 한 회의실에 모여 서로 직접 대화</b>하게 하는 것이다. 각 단어는 "나와 관련 있는 단어 누구야?"라고 질문을 던지고, 다른 모든 단어의 명찰을 훑어본 뒤, 관련이 깊은 단어의 이야기를 더 집중해서 듣는다. 예컨대 "그 동물은 길을 건너지 못했다. 그것은 너무 피곤했다"에서 '그것'은 회의실 안의 '동물'에게 집중하게 된다.</p>
+<p>비유를 실제와 대응시키면 이렇다. 단어가 던지는 질문이 쿼리(query), 각 단어의 명찰이 키(key), 단어가 실제로 들려주는 이야기가 밸류(value)에 해당한다. "얼마나 집중해서 듣는가"가 어텐션 가중치(attention weight)다. 모두가 동시에 대화하므로 순서를 기다릴 필요가 없어, 릴레이 방식보다 훨씬 빠르게(병렬로) 학습할 수 있다. 이 단순한 구조 변경이 이후 GPT, BERT 등 거의 모든 현대 AI의 뼈대가 됐다.</p>`,
+      mid: `<p>핵심은 셀프 어텐션(self-attention)이다. 문장의 각 토큰(token)을 벡터로 표현한 뒤, 토큰마다 세 가지 벡터 — 쿼리(Q), 키(K), 밸류(V) — 를 서로 다른 학습된 행렬로 만들어낸다. 어떤 토큰의 출력은 <b>자기 쿼리와 모든 토큰의 키 사이 유사도를 잰 다음, 그 유사도를 가중치로 밸류들을 가중 평균</b>한 것이다. 즉 각 토큰이 문맥 전체에서 필요한 정보를 끌어와 자신의 표현을 갱신한다.</p>
+<p>이 구조가 RNN 대비 갖는 이점은 두 가지다. 첫째, 임의의 두 토큰이 항상 1단계 만에 연결되므로 장거리 의존성(long-range dependency)이 소실되지 않는다. 둘째, 토큰 간 순차 의존이 없어 시퀀스 전체를 병렬로 계산할 수 있고, GPU 활용 효율이 급격히 오른다.</p>
+<p>보완 장치가 두 개 있다. (1) 어텐션 자체는 순서를 모르는 집합 연산이므로, 위치 정보를 담은 위치 인코딩(positional encoding)을 입력에 더해준다. (2) 유사도를 한 가지 기준으로만 재면 표현력이 부족하므로, Q/K/V를 여러 벌 만들어 서로 다른 관점(문법 관계, 지시 관계 등)으로 동시에 어텐션하는 멀티헤드 어텐션(multi-head attention)을 쓴다. 여기에 토큰별 피드포워드 네트워크(feed-forward network), 잔차 연결(residual connection), 층 정규화(layer normalization)를 쌓아 인코더-디코더 구조를 완성한다.</p>`,
+      deep: `<p>한 층의 셀프 어텐션 연산을 단계별로 따라가면 다음과 같다. 입력은 토큰 임베딩 행렬 X (n×d<sub>model</sub>, n=토큰 수)이고, 위치 인코딩을 더한 상태다.</p>
+<ol>
+<li><b>선형 사영:</b> 학습 행렬 W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub>로 Q=XW<sub>Q</sub>, K=XW<sub>K</sub>, V=XW<sub>V</sub>를 만든다. 각 헤드에서 Q, K는 d<sub>k</sub>차원, V는 d<sub>v</sub>차원이다.</li>
+<li><b>유사도 행렬:</b> QK<sup>T</sup> (n×n)의 (i,j) 성분은 토큰 i의 쿼리와 토큰 j의 키의 내적, 즉 "i가 j를 얼마나 참조할지"의 원점수다.</li>
+<li><b>스케일링:</b> d<sub>k</sub>가 크면 내적의 분산이 커져 softmax가 한 점에 몰리고 기울기가 소실된다. 이를 막으려 √d<sub>k</sub>로 나눈다.</li>
+<li><b>softmax:</b> 행별로 softmax를 취해 각 행이 합 1인 확률 분포, 즉 어텐션 가중치가 된다. 최종식은 Attention(Q,K,V) = softmax(QK<sup>T</sup>/√d<sub>k</sub>)V.</li>
+<li><b>가중합:</b> 가중치로 V를 가중 평균해 각 토큰의 새 표현을 얻는다. 멀티헤드에서는 이 연산을 h개 헤드에서 병렬 수행하고 결과를 이어붙여(concat) W<sub>O</sub>로 다시 사영한다.</li>
+<li><b>블록 완성:</b> 어텐션 출력에 잔차 연결과 층 정규화를 적용하고, 위치별 FFN(두 개의 선형 변환과 비선형 활성)을 거쳐 다시 잔차+정규화한다. 이 블록을 N층 쌓는다.</li>
+</ol>
+<p>디코더에는 두 가지가 추가된다. 미래 토큰을 못 보게 유사도 행렬의 상삼각을 -∞로 채우는 마스크드 어텐션(masked attention), 그리고 디코더의 Q가 인코더 출력의 K/V를 참조하는 교차 어텐션(cross-attention)이다. 학습 시에는 정답 시퀀스를 통째로 넣고 마스크로 미래만 가리므로(teacher forcing) 전체 위치를 병렬로 학습할 수 있고, 추론 시에만 토큰을 하나씩 생성한다.</p>
+<p>위치 인코딩은 원논문에서는 주파수를 달리한 사인·코사인 함수 — PE(pos,2i)=sin(pos/10000<sup>2i/d</sup>), 홀수 차원은 cos — 를 사용했다. 서로 다른 위치의 인코딩이 선형 변환으로 상대 위치를 표현할 수 있다는 성질을 노린 선택이며, 이후 연구들은 학습형·상대형 위치 표현으로 대체해 갔다. 계산 복잡도는 시퀀스 길이 n에 대해 O(n²·d)로 RNN의 O(n·d²)와 대비되는데, 한 층 안의 연산이 전부 행렬곱이라 GPU에 극도로 유리한 대신 n이 길어질수록 어텐션의 n² 비용이 병목이 되며, 이는 이후 효율적 어텐션과 긴 컨텍스트 연구의 출발점이 된다.</p>`
+    },
+    impact: `<p>트랜스포머는 발표 후 수년 만에 NLP를 넘어 사실상 모든 분야의 표준 아키텍처가 됐다. GPT 계열(디코더만 사용)과 BERT(인코더만 사용)가 직접적 후손이고, 비전의 ViT, 음성의 Whisper, 단백질 구조 예측의 AlphaFold2까지 같은 뼈대를 공유한다. "병렬화 가능한 범용 시퀀스 처리기"라는 성질이 대규모 사전학습(pre-training) 시대를 여는 하드웨어적 전제 조건이 됐다는 점이 가장 큰 의의다.</p>`,
+    uncertainty: []
+  }
+});
+
+window.AITL.register({
+  id: "gpt2-2019", sector: "nlp_llm", also_in: [],
+  type: "paper", tier: "minor", year: 2019, date: "2019-02",
+  evolves_from: ["gpt1-2018"],
+  title_en: "Language Models are Unsupervised Multitask Learners",
+  name_ko: "GPT-2",
+  oneliner: "규모를 키운 언어 모델이 배운 적 없는 과제를 zero-shot으로 수행",
+  link: { kind: "blog", label: "OpenAI: Better Language Models",
+          url: "https://openai.com/research/better-language-models" },
+  detail: {
+    tldr: "GPT-1의 구조를 거의 그대로 두고 모델·데이터 규모만 크게 키웠더니, 과제별 학습 없이도 요약·번역 같은 과제가 어느 정도 수행됐다.",
+    levels: {
+      intro: `<p><a href="#/item/gpt1-2018">GPT-1</a>에서 달라진 것은 본질적으로 <b>크기</b>다. 책을 열 배쯤 많이 읽은 사람이, 요약하는 법을 따로 배운 적이 없는데도 긴 글을 요약해내는 것과 비슷한 일이 일어났다. 비유의 대응은 이렇다. "많이 읽기"는 훨씬 큰 웹 텍스트로 다음 단어 예측을 학습한 것이고, "따로 배운 적 없는 요약"이 zero-shot 수행 — 과제 전용 추가 학습(fine-tuning) 없이 지시만으로 과제를 해내는 것 — 에 해당한다. 모델이 위험할 수 있다는 이유로 단계적으로 공개되어 논쟁을 일으킨 것으로도 유명하다.</p>`,
+      mid: `<p>아키텍처는 GPT-1과 같은 디코더 전용 트랜스포머이고, 층 정규화 위치 이동 같은 소폭 조정만 있었다. 실질적 변경점은 (1) 파라미터를 최대 15억 개 규모로 확대, (2) 품질 필터링된 대규모 웹 문서 데이터셋(WebText) 구축, (3) 평가 방식의 전환이다. 과제를 별도 헤드로 학습하는 대신 "TL;DR:" 같은 텍스트 프롬프트로 과제를 지시하고 언어 모델의 이어쓰기만으로 답을 얻는 zero-shot 평가를 전면에 세웠다. "언어 모델을 충분히 키우면 다목적 학습기가 된다"는 프레임이 이 논문의 핵심 주장이다.</p>`,
+      deep: `<p>기술적 변경점은 다음과 같다. (1) 층 정규화(layer normalization)를 각 서브블록 출력 뒤가 아니라 입력 앞으로 옮기고(pre-LN 방향) 마지막 블록 뒤에 추가 정규화를 두어 깊은 층에서의 학습 안정성을 높였다. (2) 컨텍스트 길이를 512에서 1024 토큰으로 확장하고 바이트 수준 BPE(byte pair encoding) 어휘를 사용해 임의 텍스트를 손실 없이 다뤘다. (3) 잔차 경로 가중치를 층 수에 따라 1/√N으로 스케일링해 초기화했다. 평가에서는 언어 모델링 벤치마크 다수에서 별도 미세조정 없이 당시 최고 성능을 얻었고, 요약·번역·질의응답을 프롬프트만으로 유도해 "과제 = 조건부 텍스트 생성"이라는 이후 GPT-3 in-context learning의 전신이 되는 관점을 제시했다.</p>`
+    },
+    impact: `<p>"구조 혁신 없이 규모 확대만으로 새 능력이 나타난다"는 관찰은 이후 스케일링 법칙 연구와 GPT-3의 직접적 근거가 됐다. 단계적 공개 결정은 AI 공개 정책 논쟁의 초기 사례로 남았다.</p>`,
+    uncertainty: []
+  }
+});
+
+// ---- Phase 2 골격 (detail은 Phase 3에서) ----
+
+window.AITL.register({
+  id: "word2vec-2013", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2013, date: "2013-01", evolves_from: [],
+  title_en: "Efficient Estimation of Word Representations in Vector Space",
+  name_ko: "Word2Vec",
+  oneliner: "단어를 의미 연산이 가능한 벡터로 학습하는 임베딩 기법",
+  link: { kind: "arxiv", label: "arXiv:1301.3781", url: "https://arxiv.org/abs/1301.3781" },
+  detail: {
+    tldr: "단어를 뜻이 반영된 좌표 벡터로 바꿔, 단어 사이의 의미 관계를 산술 연산으로 다룰 수 있게 했다.",
+    levels: {
+      intro: `<p>컴퓨터에게 단어는 원래 그냥 서로 다른 기호일 뿐이다. '왕'과 '여왕'이 비슷하다는 사실을 기호만 보고는 알 수 없다. Word2Vec의 아이디어는 <b>모든 단어를 거대한 지도 위의 한 지점</b>으로 옮기는 것이다. 뜻이 비슷한 단어일수록 지도에서 가까운 곳에 놓이고, '왕'에서 '남자' 방향을 빼고 '여자' 방향을 더하면 '여왕' 근처에 도착하는 식의 방향 관계까지 생긴다.</p>
+<p>이 지도를 사람 손으로 그리는 것이 아니라, 컴퓨터가 방대한 텍스트를 읽으며 스스로 만든다. 방법은 단순한 퀴즈다. 문장에서 한 단어를 보여주고 "주변에 어떤 단어들이 있었을까"를 반복해서 맞히게 하면, 비슷한 문맥에 나타나는 단어들이 자연스럽게 지도에서 가까워진다.</p>
+<p>비유를 실제와 대응시키면, 지도 위의 지점은 실제로 수백 개의 숫자로 이루어진 벡터(vector)이고, 지도에서의 거리와 방향은 벡터 사이의 유사도와 차이 연산에 해당한다. 주변 단어 맞히기 퀴즈는 얕은 신경망의 예측 학습이고, 퀴즈를 잘 풀도록 지점의 위치를 조금씩 옮기는 과정이 학습(training)이다. "단어의 뜻은 그 단어가 어울리는 문맥이 결정한다"는 오래된 언어학 가설을 대규모 계산으로 구현한 셈이며, 이렇게 얻은 단어 벡터는 이후 거의 모든 자연어 처리 시스템의 입력 재료가 됐다.</p>`,
+      mid: `<p>Word2Vec은 단어 임베딩(word embedding) — 각 단어를 수백 차원의 실수 벡터로 표현하는 것 — 을 대규모로 빠르게 학습하는 두 가지 모델을 제안했다. CBOW(continuous bag-of-words)는 주변 단어들로 가운데 단어를 예측하고, Skip-gram은 반대로 가운데 단어로 주변 단어들을 예측한다. 두 경우 모두 예측을 잘하도록 벡터를 조정하다 보면, 비슷한 문맥에서 쓰이는 단어들의 벡터가 서로 가까워진다. 이는 분포 가설(distributional hypothesis) — 단어의 의미는 함께 나타나는 단어들의 분포로 드러난다 — 의 신경망 구현이다.</p>
+<p>핵심 기여는 표현력보다 <b>계산 효율</b>이다. 이전의 신경망 언어 모델은 은닉층 연산이 무거워 느렸는데, Word2Vec은 비선형 은닉층을 없앤 사실상의 로그-선형 구조로 단순화했다. 또 어휘 전체에 대해 확률을 계산하는 비용을 피하려고, 정답 단어와 소수의 오답 단어만 구분하도록 학습하는 네거티브 샘플링(negative sampling)과, 어휘를 이진 트리로 배열하는 계층적 소프트맥스(hierarchical softmax)라는 근사 기법을 사용했다. 덕분에 수십억 단어 규모의 말뭉치도 짧은 시간에 학습할 수 있었다.</p>
+<p>학습된 벡터 공간에는 의미적·문법적 규칙성이 선형 구조로 나타난다. 유명한 예가 vec("king") - vec("man") + vec("woman")이 vec("queen")과 가장 가까워지는 단어 유추(analogy)다. 이렇게 얻은 벡터는 그대로 다른 과제(분류, 번역 등)의 입력 표현으로 재사용됐고, "먼저 큰 데이터로 표현을 배우고 과제에 가져다 쓴다"는 NLP 전이 학습의 초기 형태가 됐다.</p>`,
+      deep: `<p>Skip-gram을 기준으로 학습 과정을 따라가면 다음과 같다. 어휘 V의 각 단어 w는 두 개의 벡터를 갖는다. 중심 단어일 때 쓰는 입력 벡터 v<sub>w</sub>와, 문맥 단어일 때 쓰는 출력 벡터 u<sub>w</sub>다(각각 입력 행렬과 출력 행렬의 행에 해당한다).</p>
+<ol>
+<li><b>목적 함수:</b> 길이 T의 말뭉치에서 각 위치 t의 중심 단어에 대해, 창 크기 c 이내의 문맥 단어들의 로그 확률 합 (1/T)∑<sub>t</sub>∑<sub>j</sub> log p(w<sub>t+j</sub>|w<sub>t</sub>) (단, -c≤j≤c, j≠0)를 최대화한다.</li>
+<li><b>소프트맥스와 병목:</b> p(o|c) = exp(u<sub>o</sub>·v<sub>c</sub>) / ∑<sub>w</sub> exp(u<sub>w</sub>·v<sub>c</sub>)로 정의되는데, 분모가 어휘 전체(수십만~수백만 단어)에 대한 합이라 매 갱신마다 계산하기엔 너무 비싸다.</li>
+<li><b>네거티브 샘플링:</b> 소프트맥스를 이진 분류 여러 개로 근사한다. 실제 문맥 쌍 (c,o)는 참으로, 잡음 분포 P<sub>n</sub>에서 뽑은 k개의 무작위 단어 u<sub>i</sub>는 거짓으로 구분하도록 log σ(u<sub>o</sub>·v<sub>c</sub>) + ∑<sub>i</sub> log σ(-u<sub>i</sub>·v<sub>c</sub>)를 최대화한다(σ는 시그모이드 함수). 잡음 분포로는 단어 빈도의 3/4승에 비례하는 분포가 경험적으로 가장 좋았다.</li>
+<li><b>빈번어 서브샘플링:</b> "the" 같은 초고빈도 단어는 정보가 적으므로, 빈도가 높을수록 큰 확률로 학습 쌍에서 제외해 희귀 단어의 학습 기회를 늘린다.</li>
+<li><b>대안 — 계층적 소프트맥스:</b> 어휘를 허프만 트리(Huffman tree)로 배열하고 확률을 루트에서 리프까지의 이진 결정 곱으로 분해하면, 한 단어의 확률 계산이 어휘 크기의 로그 수준으로 줄어든다.</li>
+</ol>
+<p>CBOW는 방향만 반대로, 문맥 단어 벡터들의 평균으로 중심 단어를 예측한다. Skip-gram은 희귀 단어 표현에, CBOW는 학습 속도에 유리한 것으로 보고됐다. 후속 논문에서는 자주 붙어 다니는 구(phrase)를 하나의 토큰으로 묶는 전처리와 네거티브 샘플링의 정식화가 추가됐다.</p>
+<p>이 학습이 실제로 무엇을 하는지에 대한 후속 분석도 활발했다. 네거티브 샘플링 기반 Skip-gram이 단어-문맥 점별 상호정보량(PMI) 행렬의 암묵적 분해에 대응한다는 분석이 대표적이며, 이는 신경망 임베딩과 전통적 카운트 기반 기법(잠재 의미 분석 등)을 잇는 다리가 됐다. 한계도 뚜렷했다. 단어당 벡터가 하나뿐이라 다의어를 구분하지 못하고, 문맥에 따라 표현이 바뀌지 않는다. 이 한계가 이후 ELMo, <a href="#/item/bert-2018">BERT</a>류의 문맥적 임베딩(contextual embedding)으로 이어지는 직접적 동기가 됐다.</p>`
+    },
+    impact: `<p>Word2Vec은 "표현을 먼저 배우고 과제에 전이한다"는 발상을 NLP의 상식으로 만들었다. GloVe, fastText 같은 직계 후속이 나왔고, 문장·문서·그래프·상품 추천까지 "무엇이든 벡터로 임베딩한다"는 방법론이 분야 전체로 퍼졌다. 단어 유추 같은 벡터 산술은 신경망이 의미 구조를 학습할 수 있다는 강력한 직관적 증거가 되어 표현 학습 연구를 가속했다. 동시에 고정 벡터의 한계는 문맥적 임베딩(ELMo, BERT)으로 넘어가는 동기가 됐고, 학습 말뭉치의 사회적 편향이 벡터에 그대로 새겨진다는 관찰은 AI 공정성 연구의 초기 소재가 됐다.</p>`,
+    uncertainty: []
+  }
+});
+
+window.AITL.register({
+  id: "bert-2018", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2018, date: "2018-10", evolves_from: ["transformer-2017"],
+  title_en: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+  name_ko: "BERT",
+  oneliner: "양방향 마스크 언어 모델 사전학습으로 이해 과제를 평정",
+  link: { kind: "arxiv", label: "arXiv:1810.04805", url: "https://arxiv.org/abs/1810.04805" }
+});
+
+window.AITL.register({
+  id: "t5-2019", sector: "nlp_llm", also_in: [], type: "paper", tier: "minor",
+  year: 2019, date: "2019-10", evolves_from: ["bert-2018"],
+  title_en: "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+  name_ko: "T5",
+  oneliner: "모든 NLP 과제를 텍스트-투-텍스트 형식으로 통일",
+  link: { kind: "arxiv", label: "arXiv:1910.10683", url: "https://arxiv.org/abs/1910.10683" }
+});
+
+window.AITL.register({
+  id: "gpt3-2020", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2020, date: "2020-05", evolves_from: ["gpt2-2019"],
+  title_en: "Language Models are Few-Shot Learners",
+  name_ko: "GPT-3",
+  oneliner: "1750억 파라미터 규모에서 나타난 in-context 학습 능력",
+  link: { kind: "arxiv", label: "arXiv:2005.14165", url: "https://arxiv.org/abs/2005.14165" }
+});
+
+window.AITL.register({
+  id: "scaling-laws-2020", sector: "nlp_llm", also_in: [], type: "paper", tier: "minor",
+  year: 2020, date: "2020-01", evolves_from: [],
+  title_en: "Scaling Laws for Neural Language Models",
+  name_ko: "스케일링 법칙(Scaling Laws)",
+  oneliner: "성능이 모델·데이터·연산량의 거듭제곱 법칙을 따름을 규명",
+  link: { kind: "arxiv", label: "arXiv:2001.08361", url: "https://arxiv.org/abs/2001.08361" }
+});
+
+window.AITL.register({
+  id: "chinchilla-2022", sector: "nlp_llm", also_in: [], type: "paper", tier: "minor",
+  year: 2022, date: "2022-03", evolves_from: ["scaling-laws-2020"],
+  title_en: "Training Compute-Optimal Large Language Models",
+  name_ko: "Chinchilla",
+  oneliner: "같은 연산량이면 모델보다 데이터를 키워야 함을 입증",
+  link: { kind: "arxiv", label: "arXiv:2203.15556", url: "https://arxiv.org/abs/2203.15556" }
+});
+
+window.AITL.register({
+  id: "instructgpt-2022", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2022, date: "2022-03", evolves_from: ["gpt3-2020"],
+  title_en: "Training language models to follow instructions with human feedback",
+  name_ko: "InstructGPT (RLHF)",
+  oneliner: "인간 피드백 강화학습으로 언어 모델을 지시에 정렬",
+  link: { kind: "arxiv", label: "arXiv:2203.02155", url: "https://arxiv.org/abs/2203.02155" }
+});
+
+window.AITL.register({
+  id: "chatgpt-2022", sector: "nlp_llm", also_in: [], type: "product", tier: "major",
+  year: 2022, date: "2022-11", evolves_from: ["instructgpt-2022"],
+  title_en: "ChatGPT",
+  name_ko: "ChatGPT",
+  oneliner: "대화형 인터페이스로 LLM을 대중화한 서비스",
+  link: null
+});
+
+window.AITL.register({
+  id: "llama-2023", sector: "nlp_llm", also_in: [], type: "paper", tier: "major",
+  year: 2023, date: "2023-02", evolves_from: ["chinchilla-2022"],
+  title_en: "LLaMA: Open and Efficient Foundation Language Models",
+  name_ko: "LLaMA",
+  oneliner: "공개 가중치 고성능 LLM으로 오픈소스 생태계를 촉발",
+  link: { kind: "arxiv", label: "arXiv:2302.13971", url: "https://arxiv.org/abs/2302.13971" }
+});
+
+window.AITL.register({
+  id: "gpt4-2023", sector: "nlp_llm", also_in: [], type: "model", tier: "major",
+  year: 2023, date: "2023-03", evolves_from: ["chatgpt-2022"],
+  title_en: "GPT-4 Technical Report",
+  name_ko: "GPT-4",
+  oneliner: "전문가 시험 수준의 추론과 이미지 입력을 갖춘 LLM",
+  link: { kind: "arxiv", label: "arXiv:2303.08774", url: "https://arxiv.org/abs/2303.08774" }
+});
+
+window.AITL.register({
+  id: "o1-2024", sector: "nlp_llm", also_in: [], type: "model", tier: "major",
+  year: 2024, date: "2024-09", evolves_from: ["gpt4-2023"],
+  title_en: "OpenAI o1",
+  name_ko: "OpenAI o1 (추론 모델)",
+  oneliner: "답하기 전에 길게 생각하는 사고 사슬 강화학습 모델",
+  link: null
+});
+
+window.AITL.register({
+  id: "deepseek-r1-2025", sector: "nlp_llm", also_in: [], type: "paper", tier: "minor",
+  year: 2025, date: "2025-01", evolves_from: ["o1-2024"],
+  title_en: "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+  name_ko: "DeepSeek-R1",
+  oneliner: "공개된 추론 특화 모델과 그 강화학습 레시피",
+  link: { kind: "arxiv", label: "arXiv:2501.12948", url: "https://arxiv.org/abs/2501.12948" }
+});
