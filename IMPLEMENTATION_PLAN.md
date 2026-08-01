@@ -154,6 +154,26 @@
 - [x] `scripts/build_standalone.js` 작성 + `dist/index_standalone.html` 생성 — css/js/data 전부 인라인, file://로 열어 홈→차트→상세→토글 동작 구조 확인
 - [x] 최종 게이트: `node scripts/validate.js --strict` 통과 + PRD §9 수용 기준 전 항목 자체 점검 결과를 Log에 기록
 
+## Phase 5 — 가독성 리디자인 (사람 추가 2026-08-01)
+
+사람 피드백: 상세 본문이 정보를 문장에 욱여넣은 벽글이라 읽히지 않는다.
+POLICY §26(문단 320자 상한, 줄표 삽입구 금지, major mid 구조 요소)과 PRD §4 가독성 규칙이 신설되었고
+validate.js가 이를 강제한다. `word2vec-2013`이 재구성 예시다: 비유↔실제 대응은 표로, A/B 대비는
+비교표로, 근사 기법·변경점 나열은 목록으로, deep 수식 기호는 기호 정의 표로 옮긴다.
+validate 실패를 0으로 만드는 것이 각 태스크의 완료 조건이며, 기계적 문단 쪼개기가 아니라
+정보 구조(대비·나열·정의)를 표·목록으로 옮기는 재구성이어야 한다.
+
+- [ ] nlp_llm 전 노드 가독성 재구성 (word2vec-2013 예시 수준)
+- [ ] vision 전 노드 가독성 재구성
+- [ ] generative 전 노드 가독성 재구성
+- [ ] rl_games 전 노드 가독성 재구성
+- [ ] multimodal 전 노드 가독성 재구성
+- [ ] speech_audio 전 노드 가독성 재구성
+- [ ] robotics 전 노드 가독성 재구성
+- [ ] code_agents 전 노드 가독성 재구성
+- [ ] ai4science 전 노드 가독성 재구성
+- [ ] `scripts/build_standalone.js` 재실행으로 dist 재생성 + `node scripts/validate.js --strict` 재통과 확인
+
 ## Log (이터레이션마다 1줄 append)
 
 <!-- 형식: - YYYY-MM-DD iterNNN: <작업> — <특이사항/판단 근거, 없으면 "-"> -->

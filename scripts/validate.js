@@ -31,7 +31,8 @@ const FLOORS = { // 태그 제거 후 글자 수 하한 (PRD §3)
   minor: { intro: 200, mid: 200, deep: 200, impact: 100, deepSteps: 0 },
 };
 const ALLOWED_TAGS = new Set(['p', 'ol', 'ul', 'li', 'b', 'i', 'em', 'strong',
-  'code', 'sub', 'sup', 'br', 'a']);
+  'code', 'sub', 'sup', 'br', 'a', 'table', 'thead', 'tbody', 'tr', 'th', 'td']);
+const PARA_MAX = 320; // <p> 하나의 태그 제거 후 글자 수 상한 (POLICY §26)
 const VOID_TAGS = new Set(['br']);
 const SECTOR_FILE_BUDGET = 200 * 1024;      // POLICY §23
 const SITE_BUDGET = 2.5 * 1024 * 1024;
@@ -166,16 +167,32 @@ for (const it of items) {
     if (text.length < floors[lv]) err(`${id}: levels.${lv} ${text.length}자 < 하한 ${floors[lv]}자 (${it.tier})`);
     if (!/[가-힣]/.test(text)) err(`${id}: levels.${lv}에 한국어가 없다 (POLICY §22)`);
     if (/(중급에서|입문에서|심화에서)\s*(설명|다룬|말한)/.test(text)) err(`${id}: levels.${lv} 레벨 간 참조 금지 (POLICY §19)`);
+    for (const pm of html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)) {
+      const ptxt = stripTags(pm[1]);
+      if (ptxt.length > PARA_MAX) err(`${id}: levels.${lv} 문단 ${ptxt.length}자 > ${PARA_MAX}자 — 문단을 나누거나 표·목록으로 구조화 (POLICY §26)`);
+      if ((pm[1].match(/—/g) || []).length >= 2) err(`${id}: levels.${lv} 문단에 줄표(—) 삽입구 2회 이상 — 문장을 분리하거나 표로 (POLICY §26)`);
+    }
   }
   if (typeof d.levels.intro === 'string' && MATH_INTRO_BAN.test(d.levels.intro)) {
     err(`${id}: intro에 수식·그리스 문자·sub/sup 금지 (POLICY §18)`);
+  }
+  if (it.tier === 'major' && typeof d.levels.mid === 'string'
+      && !/<(table|ul|ol)[\s>]/.test(d.levels.mid)) {
+    err(`${id}: major mid에 구조 요소(<table>/<ul>/<ol>)가 없다 (POLICY §26)`);
   }
   if (typeof d.levels.deep === 'string' && it.tier === 'major') {
     const steps = (d.levels.deep.match(/<(li|p)[\s>]/g) || []).length;
     if (steps < FLOORS.major.deepSteps) err(`${id}: major deep은 <p>/<li> 단계 ≥${FLOORS.major.deepSteps} (현재 ${steps})`);
   }
   if (typeof d.impact !== 'string' || stripTags(d.impact).length < floors.impact) err(`${id}: impact ${d.impact ? stripTags(d.impact).length : 0}자 < 하한 ${floors.impact}자`);
-  else checkHtml(id, 'impact', d.impact);
+  else {
+    checkHtml(id, 'impact', d.impact);
+    for (const pm of d.impact.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)) {
+      const ptxt = stripTags(pm[1]);
+      if (ptxt.length > PARA_MAX) err(`${id}: impact 문단 ${ptxt.length}자 > ${PARA_MAX}자 — 문단을 나누거나 표·목록으로 구조화 (POLICY §26)`);
+      if ((pm[1].match(/—/g) || []).length >= 2) err(`${id}: impact 문단에 줄표(—) 삽입구 2회 이상 — 문장을 분리하거나 표로 (POLICY §26)`);
+    }
+  }
   if (!Array.isArray(d.uncertainty)) err(`${id}: uncertainty는 배열`);
   if (it.year >= 2025 && Array.isArray(d.uncertainty) && d.uncertainty.length === 0) {
     err(`${id}: 2025년 이후 노드는 uncertainty 필수 (POLICY §16)`);
