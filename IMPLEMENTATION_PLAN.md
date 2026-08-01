@@ -6,11 +6,11 @@
 
 ## Phase 1 — Scaffold & Shell
 
-- [ ] `data/meta.js`: PRD §2 레지스트리 그대로 9개 섹터 + `window.AITL = { sectors, items: [], register() }` 부트스트랩. `node scripts/validate.js` 통과 확인
-- [ ] `index.html` + `css/main.css`: 셸(사이드바·헤더·메인 영역·모바일 드로어), 데이터 0건 상태에서 홈이 렌더되고 콘솔 에러 0
-- [ ] `js/app.js`: 해시 라우터(`#/`, `#/sector/:id`, `#/item/:id`, 404 패널), 홈 화면(프리퀄 블록 + 섹터 카드), 상세 페이지 틀(레벨 토글 [입문|중급|심화], localStorage 기억)
-- [ ] `js/flowchart.js`: SVG 계보도 렌더러 — 연도 x축, evolves_from 기반 레인 배정, 곡선 화살표 엣지, ghost 노드(점선+클릭 이동), 공동 배지, 노드 겹침 금지
-- [ ] `data/sectors/nlp_llm.js`: 샘플 2건(transformer-2017, gpt2-2019 — PRD §4 골드 스탠다드 그대로) 등록, flow chart→상세→3레벨 토글→뒤로가기 end-to-end 동작 확인
+- [x] `data/meta.js`: PRD §2 레지스트리 그대로 9개 섹터 + `window.AITL = { sectors, items: [], register() }` 부트스트랩. `node scripts/validate.js` 통과 확인
+- [x] `index.html` + `css/main.css`: 셸(사이드바·헤더·메인 영역·모바일 드로어), 데이터 0건 상태에서 홈이 렌더되고 콘솔 에러 0
+- [x] `js/app.js`: 해시 라우터(`#/`, `#/sector/:id`, `#/item/:id`, 404 패널), 홈 화면(프리퀄 블록 + 섹터 카드), 상세 페이지 틀(레벨 토글 [입문|중급|심화], localStorage 기억)
+- [x] `js/flowchart.js`: SVG 계보도 렌더러 — 연도 x축, evolves_from 기반 레인 배정, 곡선 화살표 엣지, ghost 노드(점선+클릭 이동), 공동 배지, 노드 겹침 금지
+- [x] `data/sectors/nlp_llm.js`: 샘플 2건(transformer-2017, gpt2-2019 — PRD §4 골드 스탠다드 그대로) 등록, flow chart→상세→3레벨 토글→뒤로가기 end-to-end 동작 확인
 
 ## Phase 2 — Sector skeletons (PRD §5 시드 리스트의 전 노드를 골격으로: detail 필드 없이 id~link까지만)
 
@@ -157,3 +157,8 @@
 ## Log (이터레이션마다 1줄 append)
 
 <!-- 형식: - YYYY-MM-DD iterNNN: <작업> — <특이사항/판단 근거, 없으면 "-"> -->
+- 2026-08-01 iter001: [phase1] meta.js 섹터 레지스트리 — -
+- 2026-08-01 iter002: [phase1] index.html+css 셸 — 스텁 js/데이터 파일 동시 생성(콘솔 에러 0 요건)
+- 2026-08-01 iter003: [phase1] app.js 라우터+뷰 — -
+- 2026-08-01 iter004: [phase1] flowchart.js SVG 렌더러 — 동시점 부모-자식은 세로 엣지로 처리
+- 2026-08-01 iter005: [phase1] nlp_llm 샘플 — 참조 무결성 위해 attention-2014/seq2seq-2014/gpt1-2018 골격 선등록(POLICY §25), 골드 deep 분량 하한 보강
