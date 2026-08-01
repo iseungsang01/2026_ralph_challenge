@@ -141,5 +141,63 @@
     return out.join("");
   }
 
-  window.AITLChart = { render };
+  // 상세 페이지용 미니 계보도: 직전 계보 → 현재 → 다음 계보를 가로로
+  function miniLineage(itemId) {
+    const all = window.AITL.items;
+    const byId = new Map(all.map((i) => [i.id, i]));
+    const cur = byId.get(itemId);
+    if (!cur) return "";
+    const parents = (cur.evolves_from || []).map((p) => byId.get(p)).filter(Boolean);
+    const children = all.filter((c) => (c.evolves_from || []).includes(itemId));
+    if (!parents.length && !children.length) return "";
+
+    const NW = 132, NH = 40, GAPX = 44, GAPY = 10;
+    const cols = [parents, [cur], children];
+    const maxRows = Math.max(1, ...cols.map((c) => c.length));
+    const W = cols.length * NW + (cols.length - 1) * GAPX + 4;
+    const H = maxRows * (NH + GAPY) + 6;
+    const colX = (ci) => 2 + ci * (NW + GAPX);
+    const rowY = (n, ci) => {
+      const arr = cols[ci];
+      const total = arr.length * NH + (arr.length - 1) * GAPY;
+      const top = (H - total) / 2;
+      return top + n * (NH + GAPY);
+    };
+
+    const out = [`<div class="mini-lineage"><div class="ml-label">계보 흐름 — 이 모델의 앞뒤</div>`];
+    out.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`);
+    // 엣지: parents → cur, cur → children
+    const curX = colX(1), curY = rowY(0, 1);
+    parents.forEach((p, i) => {
+      const x1 = colX(0) + NW, y1 = rowY(i, 0) + NH / 2;
+      const x2 = curX, y2 = curY + NH / 2, mx = (x1 + x2) / 2;
+      out.push(`<path class="ml-edge" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>`);
+    });
+    children.forEach((c, i) => {
+      const x1 = curX + NW, y1 = curY + NH / 2;
+      const x2 = colX(2), y2 = rowY(i, 2) + NH / 2, mx = (x1 + x2) / 2;
+      out.push(`<path class="ml-edge" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>`);
+    });
+    // 노드
+    const drawNode = (it, ci, ri, isCur) => {
+      const x = colX(ci), y = rowY(ri, ci);
+      const nm = it.name_ko.length > 12 ? it.name_ko.slice(0, 11) + "…" : it.name_ko;
+      const g = isCur
+        ? `<g class="ml-node cur">`
+        : `<g class="ml-node" data-item="${esc(it.id)}" tabindex="0" role="link" aria-label="${esc(it.name_ko)} 상세">`;
+      out.push(g);
+      out.push(`<title>${esc(it.name_ko)} (${it.year})</title>`);
+      out.push(`<rect class="ml-box" x="${x}" y="${y}" width="${NW}" height="${NH}" rx="9"/>`);
+      out.push(`<text x="${x + NW / 2}" y="${y + 17}" text-anchor="middle">${esc(nm)}</text>`);
+      out.push(`<text x="${x + NW / 2}" y="${y + 31}" text-anchor="middle" fill="#8a94a3" font-size="10">${it.year}</text>`);
+      out.push(`</g>`);
+    };
+    parents.forEach((p, i) => drawNode(p, 0, i, false));
+    drawNode(cur, 1, 0, true);
+    children.forEach((c, i) => drawNode(c, 2, i, false));
+    out.push("</svg></div>");
+    return out.join("");
+  }
+
+  window.AITLChart = { render, miniLineage };
 })();

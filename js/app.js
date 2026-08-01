@@ -147,16 +147,21 @@
         ${children.map((c) => `<a href="#/item/${c.id}">${esc(c.name_ko)} (${c.year}) →</a>`).join("")}
       </div>`;
 
+    const mini = window.AITLChart.miniLineage(id);
     $main.innerHTML = `
-      <div class="detail-wrap">
+      <div class="detail-wrap" style="--sec:${s.color}">
         <a class="back-btn" href="#/sector/${it.sector}">← ${esc(s.name_ko)} flow chart로</a>
-        <div class="detail-head">
-          <h1>${esc(it.name_ko)}</h1>
-          <div class="title-en">${esc(it.title_en)}</div>
-          <div class="badge-row">${badges}</div>
+        <div class="detail-card">
+          <div class="detail-head">
+            <div class="detail-kicker">${esc(s.name_ko)} · ${esc(it.date)}</div>
+            <h1>${esc(it.name_ko)}</h1>
+            <div class="title-en">${esc(it.title_en)}</div>
+            <div class="badge-row">${badges}</div>
+          </div>
+          ${mini}
+          ${body}
+          ${nav}
         </div>
-        ${body}
-        ${nav}
       </div>`;
 
     $main.querySelectorAll(".level-tabs button").forEach((b) => {
@@ -166,6 +171,11 @@
         $main.querySelectorAll(".level-tabs button").forEach((x) => x.classList.toggle("active", x === b));
         document.getElementById("level-body").innerHTML = it.detail.levels[lv];
       });
+    });
+    $main.querySelectorAll(".ml-node[data-item]").forEach((g) => {
+      const go = () => { location.hash = "#/item/" + g.dataset.item; };
+      g.addEventListener("click", go);
+      g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     });
     $main.focus({ preventScroll: true });
     window.scrollTo(0, 0);
