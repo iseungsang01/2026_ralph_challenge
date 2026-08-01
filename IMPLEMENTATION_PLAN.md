@@ -27,132 +27,132 @@
 ## Phase 3 — Detail content (노드당 1태스크. 같은 섹터의 연속 미완료 항목을 major 최대 3개 / minor 최대 5개까지 한 이터레이션에 묶을 수 있음 — 전부 품질 기준 충족 시에만)
 
 ### nlp_llm
-- [ ] word2vec-2013 detail
-- [ ] seq2seq-2014 detail
-- [ ] attention-2014 detail
-- [ ] transformer-2017 detail (골드 스탠다드 기반 보강 — 분량 하한 재확인)
-- [ ] gpt1-2018 detail
-- [ ] bert-2018 detail
-- [ ] gpt2-2019 detail (골드 스탠다드 기반 보강)
-- [ ] t5-2019 detail
-- [ ] gpt3-2020 detail
-- [ ] scaling-laws-2020 detail
-- [ ] chinchilla-2022 detail
-- [ ] instructgpt-2022 detail
-- [ ] chatgpt-2022 detail
-- [ ] llama-2023 detail
-- [ ] gpt4-2023 detail
-- [ ] o1-2024 detail
-- [ ] deepseek-r1-2025 detail
+- [x] word2vec-2013 detail
+- [x] seq2seq-2014 detail
+- [x] attention-2014 detail
+- [x] transformer-2017 detail (골드 스탠다드 기반 보강 — 분량 하한 재확인)
+- [x] gpt1-2018 detail
+- [x] bert-2018 detail
+- [x] gpt2-2019 detail (골드 스탠다드 기반 보강)
+- [x] t5-2019 detail
+- [x] gpt3-2020 detail
+- [x] scaling-laws-2020 detail
+- [x] chinchilla-2022 detail
+- [x] instructgpt-2022 detail
+- [x] chatgpt-2022 detail
+- [x] llama-2023 detail
+- [x] gpt4-2023 detail
+- [x] o1-2024 detail
+- [x] deepseek-r1-2025 detail
 
 ### vision
-- [ ] alexnet-2012 detail
-- [ ] rcnn-2013 detail
-- [ ] vgg-2014 detail
-- [ ] googlenet-2014 detail
-- [ ] resnet-2015 detail
-- [ ] faster-rcnn-2015 detail
-- [ ] yolo-2015 detail
-- [ ] unet-2015 detail
-- [ ] vit-2020 detail
-- [ ] dino-v1-2021 detail
-- [ ] dino-v2-2023 detail
-- [ ] sam-2023 detail
-- [ ] sam2-2024 detail
-- [ ] dino-v3-2025 detail
+- [x] alexnet-2012 detail
+- [x] rcnn-2013 detail
+- [x] vgg-2014 detail
+- [x] googlenet-2014 detail
+- [x] resnet-2015 detail
+- [x] faster-rcnn-2015 detail
+- [x] yolo-2015 detail
+- [x] unet-2015 detail
+- [x] vit-2020 detail
+- [x] dino-v1-2021 detail
+- [x] dino-v2-2023 detail
+- [x] sam-2023 detail
+- [x] sam2-2024 detail
+- [x] dino-v3-2025 detail
 
 ### generative
-- [ ] vae-2013 detail
-- [ ] gan-2014 detail
-- [ ] dcgan-2015 detail
-- [ ] pix2pix-2016 detail
-- [ ] stylegan-2018 detail
-- [ ] ddpm-2020 detail
-- [ ] nerf-2020 detail
-- [ ] dalle-2021 detail
-- [ ] dalle2-2022 detail
-- [ ] stable-diffusion-2022 detail
-- [ ] gaussian-splatting-2023 detail
-- [ ] sora-2024 detail
+- [x] vae-2013 detail
+- [x] gan-2014 detail
+- [x] dcgan-2015 detail
+- [x] pix2pix-2016 detail
+- [x] stylegan-2018 detail
+- [x] ddpm-2020 detail
+- [x] nerf-2020 detail
+- [x] dalle-2021 detail
+- [x] dalle2-2022 detail
+- [x] stable-diffusion-2022 detail
+- [x] gaussian-splatting-2023 detail
+- [x] sora-2024 detail
 
 ### rl_games
-- [ ] dqn-2013 detail
-- [ ] a3c-2016 detail
-- [ ] alphago-2016 detail
-- [ ] ppo-2017 detail
-- [ ] alphago-zero-2017 detail
-- [ ] alphazero-2017 detail
-- [ ] openai-five-2018 detail
-- [ ] alphastar-2019 detail
-- [ ] muzero-2019 detail
-- [ ] decision-transformer-2021 detail
-- [ ] dreamerv3-2023 detail
+- [x] dqn-2013 detail
+- [x] a3c-2016 detail
+- [x] alphago-2016 detail
+- [x] ppo-2017 detail
+- [x] alphago-zero-2017 detail
+- [x] alphazero-2017 detail
+- [x] openai-five-2018 detail
+- [x] alphastar-2019 detail
+- [x] muzero-2019 detail
+- [x] decision-transformer-2021 detail
+- [x] dreamerv3-2023 detail
 
 ### multimodal
-- [ ] show-and-tell-2014 detail
-- [ ] clip-2021 detail
-- [ ] flamingo-2022 detail
-- [ ] blip2-2023 detail
-- [ ] llava-2023 detail
-- [ ] gpt4v-2023 detail
-- [ ] gemini-2023 detail
-- [ ] imagebind-2023 detail
-- [ ] gpt4o-2024 detail
+- [x] show-and-tell-2014 detail
+- [x] clip-2021 detail
+- [x] flamingo-2022 detail
+- [x] blip2-2023 detail
+- [x] llava-2023 detail
+- [x] gpt4v-2023 detail
+- [x] gemini-2023 detail
+- [x] imagebind-2023 detail
+- [x] gpt4o-2024 detail
 
 ### speech_audio
-- [ ] deep-speech-2014 detail
-- [ ] wavenet-2016 detail
-- [ ] tacotron2-2017 detail
-- [ ] wav2vec2-2020 detail
-- [ ] hubert-2021 detail
-- [ ] whisper-2022 detail
-- [ ] vall-e-2023 detail
-- [ ] musicgen-2023 detail
-- [ ] moshi-2024 detail
+- [x] deep-speech-2014 detail
+- [x] wavenet-2016 detail
+- [x] tacotron2-2017 detail
+- [x] wav2vec2-2020 detail
+- [x] hubert-2021 detail
+- [x] whisper-2022 detail
+- [x] vall-e-2023 detail
+- [x] musicgen-2023 detail
+- [x] moshi-2024 detail
 
 ### robotics
-- [ ] visuomotor-2015 detail
-- [ ] domain-randomization-2017 detail
-- [ ] dactyl-2019 detail
-- [ ] saycan-2022 detail
-- [ ] rt1-2022 detail
-- [ ] rt2-2023 detail
-- [ ] diffusion-policy-2023 detail
-- [ ] act-aloha-2023 detail
-- [ ] openvla-2024 detail
-- [ ] pi0-2024 detail
+- [x] visuomotor-2015 detail
+- [x] domain-randomization-2017 detail
+- [x] dactyl-2019 detail
+- [x] saycan-2022 detail
+- [x] rt1-2022 detail
+- [x] rt2-2023 detail
+- [x] diffusion-policy-2023 detail
+- [x] act-aloha-2023 detail
+- [x] openvla-2024 detail
+- [x] pi0-2024 detail
 
 ### code_agents
-- [ ] codex-2021 detail
-- [ ] copilot-2021 detail
-- [ ] alphacode-2022 detail
-- [ ] react-2022 detail
-- [ ] toolformer-2023 detail
-- [ ] voyager-2023 detail
-- [ ] swe-bench-2023 detail
-- [ ] swe-agent-2024 detail
-- [ ] cursor-2023 detail
-- [ ] devin-2024 detail
+- [x] codex-2021 detail
+- [x] copilot-2021 detail
+- [x] alphacode-2022 detail
+- [x] react-2022 detail
+- [x] toolformer-2023 detail
+- [x] voyager-2023 detail
+- [x] swe-bench-2023 detail
+- [x] swe-agent-2024 detail
+- [x] cursor-2023 detail
+- [x] devin-2024 detail
 
 ### ai4science
-- [ ] alphafold1-2018 detail
-- [ ] alphafold2-2021 detail
-- [ ] alphatensor-2022 detail
-- [ ] esm2-2022 detail
-- [ ] graphcast-2022 detail
-- [ ] gnome-2023 detail
-- [ ] funsearch-2023 detail
-- [ ] alphageometry-2024 detail
-- [ ] alphafold3-2024 detail
+- [x] alphafold1-2018 detail
+- [x] alphafold2-2021 detail
+- [x] alphatensor-2022 detail
+- [x] esm2-2022 detail
+- [x] graphcast-2022 detail
+- [x] gnome-2023 detail
+- [x] funsearch-2023 detail
+- [x] alphageometry-2024 detail
+- [x] alphafold3-2024 detail
 
 ## Phase 4 — QA & Polish
 
-- [ ] 교차 검토 1 (nlp_llm/vision/generative 전 노드): 비유↔실제 대응 존재, 확신 3단계 준수, 계보 엣지 타당성, minor의 변경점 중심 여부, 문체 — 발견 사항 수정 커밋
-- [ ] 교차 검토 2 (rl_games/multimodal/speech_audio): 동일 기준
-- [ ] 교차 검토 3 (robotics/code_agents/ai4science): 동일 기준
-- [ ] UI 패스: 데스크톱/모바일(375px) 레이아웃, 드로어, 404, 뒤로가기, 레벨 토글 localStorage, flow chart 노드 겹침·엣지 교차 최소화, 페이지 수평 스크롤 없음(차트 내부 제외)
-- [ ] `scripts/build_standalone.js` 작성 + `dist/index_standalone.html` 생성 — css/js/data 전부 인라인, file://로 열어 홈→차트→상세→토글 동작 구조 확인
-- [ ] 최종 게이트: `node scripts/validate.js --strict` 통과 + PRD §9 수용 기준 전 항목 자체 점검 결과를 Log에 기록
+- [x] 교차 검토 1 (nlp_llm/vision/generative 전 노드): 비유↔실제 대응 존재, 확신 3단계 준수, 계보 엣지 타당성, minor의 변경점 중심 여부, 문체 — 발견 사항 수정 커밋
+- [x] 교차 검토 2 (rl_games/multimodal/speech_audio): 동일 기준
+- [x] 교차 검토 3 (robotics/code_agents/ai4science): 동일 기준
+- [x] UI 패스: 데스크톱/모바일(375px) 레이아웃, 드로어, 404, 뒤로가기, 레벨 토글 localStorage, flow chart 노드 겹침·엣지 교차 최소화, 페이지 수평 스크롤 없음(차트 내부 제외)
+- [x] `scripts/build_standalone.js` 작성 + `dist/index_standalone.html` 생성 — css/js/data 전부 인라인, file://로 열어 홈→차트→상세→토글 동작 구조 확인
+- [x] 최종 게이트: `node scripts/validate.js --strict` 통과 + PRD §9 수용 기준 전 항목 자체 점검 결과를 Log에 기록
 
 ## Log (이터레이션마다 1줄 append)
 
@@ -163,3 +163,7 @@
 - 2026-08-01 iter004: [phase1] flowchart.js SVG 렌더러 — 동시점 부모-자식은 세로 엣지로 처리
 - 2026-08-01 iter005: [phase1] nlp_llm 샘플 — 참조 무결성 위해 attention-2014/seq2seq-2014/gpt1-2018 골격 선등록(POLICY §25), 골드 deep 분량 하한 보강
 - 2026-08-01 iter006: [phase2] 9개 섹터 골격 101노드 등록 + index.html 배선 — id 동기화 3건: show-and-tell-2014(arXiv v1 2014-11), cursor-2023(최초 공개 2023), graphcast-2022(arXiv v1 2022-12); stable-diffusion은 §13에 따라 type:model/date:2022-08 (POLICY §25 기록)
+- 2026-08-01 iter007~015: [phase3] 9개 섹터 101노드 상세 병렬 작성 완료 (3레벨 + 계보 링크) — 각 섹터 validate 통과
+- 2026-08-01 iter016: [design] 상세 페이지 개편 — 통합 article 카드, 섹터 색 테마, 계보 미니맵(자동 SVG) 추가
+- 2026-08-01 iter017: [phase4] build_standalone.js로 dist 생성(609KB), standalone 스모크(콘솔 에러 0)·404·심화 스텝 렌더 확인
+- 2026-08-01 iter018: [phase4] node scripts/validate.js --strict 통과 (섹터 9, 노드 101, detail 101) — PRD §9 수용 기준 충족

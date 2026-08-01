@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - claude/ai-progress-by-sector-3tc6a7
   workflow_dispatch:
 
 permissions:

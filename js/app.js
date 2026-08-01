@@ -37,7 +37,7 @@
   function renderNav(activeSector) {
     $nav.innerHTML = AITL.sectors
       .slice().sort((a, b) => a.order - b.order)
-      .map((s) => `<li><a href="#/sector/${s.id}" class="${s.id === activeSector ? "active" : ""}">
+      .map((s) => `<li><a href="#/sector/${s.id}" class="${s.id === activeSector ? "active" : ""}" style="--c:${s.color}">
         <span class="nav-dot" style="background:${s.color}"></span>${esc(s.name_ko)}
         <span class="nav-count">${countOf(s.id)}</span></a></li>`)
       .join("");
@@ -55,18 +55,27 @@
   function viewHome() {
     document.title = "AI 발전 흐름 by Sector";
     const sectors = AITL.sectors.slice().sort((a, b) => a.order - b.order)
-      .map((s) => `<a class="card sector-card" href="#/sector/${s.id}" style="border-top-color:${s.color}">
-        <span class="cnt">${countOf(s.id)}개</span><b>${esc(s.name_ko)}</b>
+      .map((s) => `<a class="card sector-card" href="#/sector/${s.id}" style="--c:${s.color}">
+        <span class="cnt">${countOf(s.id)}</span><b>${esc(s.name_ko)}</b>
         <span class="en">${esc(s.name_en)}</span></a>`)
       .join("");
     const prequels = PREQUELS.map((p) => `<div class="card prequel-card">
       <b>${esc(p.name)} <span style="font-weight:400;color:var(--muted)">· ${esc(p.year)}</span></b>
       <span>${esc(p.desc)}</span></div>`).join("");
+    const totalNodes = AITL.items.length;
     $main.innerHTML = `
-      <h1 class="home-title">AI 발전 흐름 by Sector</h1>
-      <p class="home-desc">2012년 AlexNet부터 2026년까지, AI의 발전사를 9개 기술 섹터의
-      시계열 계보도(flow chart)로 정리했다. 섹터를 고르면 모델·논문의 병렬/직렬 발전 과정이 보이고,
-      노드를 누르면 입문·중급·심화 3단계 수준별 해설로 들어간다.</p>
+      <div class="home-hero">
+        <h1 class="home-title">AI 발전 흐름 <span class="accent">by Sector</span></h1>
+        <p class="home-desc">2012년 AlexNet부터 2026년까지, AI의 발전사를 9개 기술 섹터의
+        시계열 계보도(flow chart)로 정리했다. 섹터를 고르면 모델·논문의 병렬/직렬 발전 과정이 보이고,
+        노드를 누르면 입문·중급·심화 3단계 수준별 해설로 들어간다.</p>
+        <div class="home-stats">
+          <div><b>9</b><span>기술 섹터</span></div>
+          <div><b>${totalNodes}</b><span>모델·논문 노드</span></div>
+          <div><b>2012–2026</b><span>시간 범위</span></div>
+          <div><b>3</b><span>수준별 해설</span></div>
+        </div>
+      </div>
       <div class="section-label">2012 이전 — 배경</div>
       <div class="prequel-grid">${prequels}</div>
       <div class="section-label">섹터</div>
@@ -131,8 +140,10 @@
         `<button data-level="${l.key}" class="${l.key === level ? "active" : ""}">${l.label}</button>`).join("");
       const unc = d.uncertainty && d.uncertainty.length
         ? `<div class="uncertainty-box">${d.uncertainty.map((u) => `<p>${esc(u)}</p>`).join("")}</div>` : "";
+      const fig = d.diagram ? window.AITLChart.diagram(d.diagram) : "";
       body = `
         <div class="tldr">${esc(d.tldr)}</div>
+        ${fig}
         <div class="level-tabs" role="tablist">${tabs}</div>
         <div class="level-body" id="level-body">${d.levels[level]}</div>
         <div class="impact-title">영향과 의의</div>
@@ -147,16 +158,21 @@
         ${children.map((c) => `<a href="#/item/${c.id}">${esc(c.name_ko)} (${c.year}) →</a>`).join("")}
       </div>`;
 
+    const mini = window.AITLChart.miniLineage(id);
     $main.innerHTML = `
-      <div class="detail-wrap">
+      <div class="detail-wrap" style="--sec:${s.color}">
         <a class="back-btn" href="#/sector/${it.sector}">← ${esc(s.name_ko)} flow chart로</a>
-        <div class="detail-head">
-          <h1>${esc(it.name_ko)}</h1>
-          <div class="title-en">${esc(it.title_en)}</div>
-          <div class="badge-row">${badges}</div>
+        <div class="detail-card">
+          <div class="detail-head">
+            <div class="detail-kicker">${esc(s.name_ko)} · ${esc(it.date)}</div>
+            <h1>${esc(it.name_ko)}</h1>
+            <div class="title-en">${esc(it.title_en)}</div>
+            <div class="badge-row">${badges}</div>
+          </div>
+          ${mini}
+          ${body}
+          ${nav}
         </div>
-        ${body}
-        ${nav}
       </div>`;
 
     $main.querySelectorAll(".level-tabs button").forEach((b) => {
@@ -166,6 +182,11 @@
         $main.querySelectorAll(".level-tabs button").forEach((x) => x.classList.toggle("active", x === b));
         document.getElementById("level-body").innerHTML = it.detail.levels[lv];
       });
+    });
+    $main.querySelectorAll(".ml-node[data-item]").forEach((g) => {
+      const go = () => { location.hash = "#/item/" + g.dataset.item; };
+      g.addEventListener("click", go);
+      g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     });
     $main.focus({ preventScroll: true });
     window.scrollTo(0, 0);
