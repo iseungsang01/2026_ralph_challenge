@@ -140,8 +140,10 @@
         `<button data-level="${l.key}" class="${l.key === level ? "active" : ""}">${l.label}</button>`).join("");
       const unc = d.uncertainty && d.uncertainty.length
         ? `<div class="uncertainty-box">${d.uncertainty.map((u) => `<p>${esc(u)}</p>`).join("")}</div>` : "";
+      const fig = d.diagram ? window.AITLChart.diagram(d.diagram) : "";
       body = `
         <div class="tldr">${esc(d.tldr)}</div>
+        ${fig}
         <div class="level-tabs" role="tablist">${tabs}</div>
         <div class="level-body" id="level-body">${d.levels[level]}</div>
         <div class="impact-title">영향과 의의</div>
