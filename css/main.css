@@ -247,6 +247,21 @@ a:hover { text-decoration: underline; }
 .level-body ul { margin: 4px 0 16px; padding-left: 20px; }
 .level-body ul li { margin-bottom: 8px; line-height: 1.8; }
 
+/* 본문 표 — 대비·나열·기호 정의 구조화 (POLICY §26) */
+.level-body table, .impact-body table {
+  border-collapse: collapse; margin: 6px 0 18px; max-width: 100%;
+  display: block; overflow-x: auto;
+  font-size: 14.5px; line-height: 1.7;
+}
+.level-body th, .impact-body th {
+  background: color-mix(in srgb, var(--sec) 7%, #fff);
+  font-weight: 700; text-align: left;
+}
+.level-body th, .level-body td, .impact-body th, .impact-body td {
+  border: 1px solid var(--line); padding: 8px 14px; vertical-align: top;
+  min-width: 72px;
+}
+
 .impact-title {
   font-size: 14px; font-weight: 700; color: var(--sec); letter-spacing: .02em;
   margin: 12px 44px 12px; padding-top: 20px; border-top: 1px solid var(--line);
